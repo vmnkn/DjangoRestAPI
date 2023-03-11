@@ -19,4 +19,13 @@ class SchoolClassViewset(viewsets.ModelViewSet):
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
-
+    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        queryset = Student.objects.all()
+        school_id = self.request.query_params.get('school_id', None)
+        school_class_id = self.request.query_params.get('school_class_id', None)
+        if school_id is not None:
+            queryset = queryset.filter(school_class_id=school_id)
+        if school_class_id is  not None:
+            queryset = queryset.filter(school_class_id=school_class_id)
+        return queryset
